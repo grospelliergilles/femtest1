@@ -14,16 +14,11 @@
 
   <meshes>
     <mesh>
-      <filename>L-shape.msh</filename>
+      <filename>circle_coarse.msh</filename>
     </mesh>
   </meshes>
 
   <fem>
     <lambda>1.0</lambda>
-    <qdot>-1.0</qdot>
-    <dirichlet-boundary-condition>
-      <surface>boundary</surface>
-      <value>0.0</value>
-    </dirichlet-boundary-condition>
   </fem>
 </case>

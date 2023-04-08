@@ -390,10 +390,34 @@ _assembleLinearOperator()
   ENUMERATE_ (Cell, icell, allCells()) {
     Cell cell = *icell;
     Real area = _computeAreaTriangle3(cell);
-    for (Node node : cell.nodes()) {
-      if (!(m_node_is_temperature_fixed[node]) && node.isOwn())
-        rhs_values[node_dof.dofId(node, 0)] += qdot * area / ElementNodes;
+
+    Real3 m0 = m_node_coord[cell.nodeId(0)];
+    Real3 m1 = m_node_coord[cell.nodeId(1)];
+    Real3 m2 = m_node_coord[cell.nodeId(2)];
+         
+    Real2 dPhi0(m1.y - m2.y, m2.x - m1.x);
+    Real2 dPhi1(m2.y - m0.y, m0.x - m2.x);
+    Real2 dPhi2(m0.y - m1.y, m1.x - m0.x);
+
+    FixedMatrix<1, 3> DXV;
+
+    DXV(0,0) = dPhi0.x /(2.*area);
+    DXV(0,1) = dPhi1.x /(2.*area);
+    DXV(0,2) = dPhi2.x /(2.*area);
+    
+    Real3 Dxv = {1,1,1};
+
+    
+    for(int i=0; i < 3; i++){
+      Node node = cell.node(i);
+      rhs_values[node_dof.dofId(node, 0)] += DXV(0,i) * area;
     }
+    
+//    int i = 0;
+//    for (Node node : cell.nodes()) {
+//     rhs_values[node_dof.dofId(node, 0)] += DXV(0,i) * area;
+//     i++;
+//    }
   }
 
   //----------------------------------------------
