@@ -301,9 +301,11 @@ _assembleLinearOperator()
         m_linear_system.matrixSetValue(dof_id, dof_id, Penalty);
         Real temperature = Penalty * m_node_temperature[node_id];
         rhs_values[dof_id] = temperature;
+        info() << "SET RHS " << dof_id.localId() << " T=" << temperature;
       }
     }
-  }else if (options()->enforceDirichletMethod() == "WeakPenalty") {
+  }
+  else if (options()->enforceDirichletMethod() == "WeakPenalty") {
 
     //----------------------------------------------
     // weak penalty method to enforce Dirichlet BC
@@ -330,9 +332,11 @@ _assembleLinearOperator()
         m_linear_system.matrixAddValue(dof_id, dof_id, Penalty);
         Real temperature = Penalty * m_node_temperature[node_id];
         rhs_values[dof_id] = temperature;
+        info() << "SET RHS " << dof_id.localId() << " T=" << temperature;
       }
     }
-  }else if (options()->enforceDirichletMethod() == "RowElimination") {
+  }
+  else if (options()->enforceDirichletMethod() == "RowElimination") {
 
     //----------------------------------------------
     // Row elimination method to enforce Dirichlet BC
@@ -349,7 +353,8 @@ _assembleLinearOperator()
            << options()->enforceDirichletMethod() << " method ";
 
     // TODO
-  }else if (options()->enforceDirichletMethod() == "RowColumnElimination") {
+  }
+  else if (options()->enforceDirichletMethod() == "RowColumnElimination") {
 
     //----------------------------------------------
     // Row elimination method to enforce Dirichlet BC
@@ -378,7 +383,9 @@ _assembleLinearOperator()
            << "  - RowElimination\n"
            << "  - RowColumnElimination\n";
   }
+  using LongReal = long double;
 
+  LongReal test1 = 0.0;
 
   //----------------------------------------------
   // Constant source term assembly
@@ -389,28 +396,33 @@ _assembleLinearOperator()
   //----------------------------------------------
   ENUMERATE_ (Cell, icell, allCells()) {
     Cell cell = *icell;
-    Real area = _computeAreaTriangle3(cell);
 
     Real3 m0 = m_node_coord[cell.nodeId(0)];
     Real3 m1 = m_node_coord[cell.nodeId(1)];
     Real3 m2 = m_node_coord[cell.nodeId(2)];
          
-    Real2 dPhi0(m1.y - m2.y, m2.x - m1.x);
-    Real2 dPhi1(m2.y - m0.y, m0.x - m2.x);
-    Real2 dPhi2(m0.y - m1.y, m1.x - m0.x);
+    //Real area = _computeAreaTriangle3(cell);
+    LongReal area = 0.5 * ((m1.x - m0.x) * (m2.y - m0.y) - (m2.x - m0.x) * (m1.y - m0.y));
 
-    FixedMatrix<1, 3> DXV;
+    LongReal dPhi0(m1.y - m2.y);
+    LongReal dPhi1(m2.y - m0.y);
+    LongReal dPhi2(m0.y - m1.y);
 
-    DXV(0,0) = dPhi0.x /(2.*area);
-    DXV(0,1) = dPhi1.x /(2.*area);
-    DXV(0,2) = dPhi2.x /(2.*area);
-    
-    Real3 Dxv = {1,1,1};
+    LongReal DXV[3];
 
+    DXV[0] = dPhi0 /(2.*area);
+    DXV[1] = dPhi1 /(2.*area);
+    DXV[2] = dPhi2 /(2.*area);
     
     for(int i=0; i < 3; i++){
       Node node = cell.node(i);
-      rhs_values[node_dof.dofId(node, 0)] += DXV(0,i) * area;
+      LongReal v = DXV[i] * area;
+      rhs_values[node_dof.dofId(node, 0)] += v;
+      DoFLocalId ddof = node_dof.dofId(node, 0);
+      if (ddof.localId()==2){
+        test1 += v;
+        info() << "ADD RHS " << ddof.localId() << " cell=" << cell.localId() << " I=" << i << " T=" << v << " Total=" << rhs_values[ddof] << " Test=" << test1;
+      }
     }
     
 //    int i = 0;
@@ -435,8 +447,11 @@ _assembleLinearOperator()
       Face face = *iface;
       Real length = _computeEdgeLength2(face);
       for (Node node : iface->nodes()) {
-        if (!(m_node_is_temperature_fixed[node]) && node.isOwn())
-          rhs_values[node_dof.dofId(node, 0)] += value * length / 2.;
+        if (!(m_node_is_temperature_fixed[node]) && node.isOwn()){
+          Real xv = value * length / 2.;
+          rhs_values[node_dof.dofId(node, 0)] += xv;
+          info() << "ADD RHS Neuman " << node_dof.dofId(node, 0).localId() << " T=" << xv << rhs_values[node_dof.dofId(node, 0)];
+        }
       }
     }
   }
