@@ -1,12 +1,19 @@
 add_executable(Acoustics
   FemModule.h
   FemModule.cc
+  PerfectGasEOSService.cc
+  DirichletBCService.cc
   main.cc
   Fem_axl.h
+  PerfectGasEOS_axl.h
+  DirichletBC_axl.h
 )
 
 arcane_generate_axl(Fem)
+arcane_generate_axl(PerfectGasEOS)
+arcane_generate_axl(DirichletBC)
 arcane_add_arcane_libraries_to_target(Acoustics)
+
 target_include_directories(Acoustics PUBLIC . ${CMAKE_CURRENT_BINARY_DIR})
 configure_file(Acoustics.config ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 configure_file(Test.sub.arc ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)

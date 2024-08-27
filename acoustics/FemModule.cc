@@ -114,6 +114,16 @@ _assembleLinearOperator()
   rhs_values.fill(0.0);
 
   const auto node_dof(m_dofs_on_nodes.nodeDoFConnectivityView());
+  
+  //EOS::IEquationOfState* x = options()->dirichlet();
+  //x->initEOS(allCells());
+
+  //EOS::IDirichletPointCondition* x = options()->boundaryCondition()->dirichletBoundaryCondition();
+  //for (EOS::IDirichletPointCondition* bs : options()->boundaryConditions()->dirichletPointConditions())
+
+  //cout << "NAME   " <<  options()->dirichlet()->namebc() << endl;
+  //const auto& em = options()->dirichlet();
+  //x->namebc()
 
   // setp 2
   for (const auto& bs : options()->neumannBoundaryCondition()) {

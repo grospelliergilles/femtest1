@@ -46,6 +46,9 @@
     </neumann-boundary-condition>
     <linear-system name="SequentialBasicLinearSystem" />
     <result-file>sub_2D.txt</result-file>
+    <dirichlet name="PerfectGas">
+      <namebc>dirrrr</namebc>
+    </dirichlet>
   </fem>
 
   <!--
@@ -59,5 +62,8 @@
      <variable>U</variable>
    </output>
   </arcane-post-processing>
+
+
+  
 
 </case>

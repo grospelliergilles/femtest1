@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<service name="DirichletBC" version="1.0" type="caseoption">
+  <description>Service to apply Dirichlet BC</description>
+  <interface name="EOS::IArcaneFemBC" />
+  <options>
+    <complex name  = "dirichlet-point-condition"
+             type  = "DirichletPointCondition"
+             minOccurs = "0"
+             maxOccurs = "unbounded"
+             interface ="EOS::IDirichletPointCondition"
+      >
+      <description>
+        Dirichlet point condition
+      </description>
+      <extended name = "node" type = "Arcane::NodeGroup">
+        <description>
+          NodeGroup on which to apply these point Dirichlet condition
+        </description>
+      </extended>
+      <simple name = "value" type = "real">
+        <description>
+          Value of the point Dirichlet condition
+        </description>
+      </simple>
+      <simple name = "enforce-Dirichlet-method" type = "string" default="Penalty" optional="true">
+        <description>
+          Method via which Dirichlet boundary condition is imposed
+        </description>
+      </simple>
+      <simple name = "penalty" type = "real" default="1.e30" optional="true">
+        <description>
+          Penalty value for enforcing Dirichlet condition
+        </description>
+      </simple>
+    </complex>
+  </options>
+</service>

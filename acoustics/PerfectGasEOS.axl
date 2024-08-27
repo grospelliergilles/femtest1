@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<service name="PerfectGasEOS" version="1.0" type="caseoption">
+  <description>Jeu de données du service PerfectGasEOS</description>
+  <interface name="EOS::IEquationOfState" />
+  <options>
+      <simple name="namebc" type="string" optional="true">
+      <description>File name of a file containing the values of the solution vector to check the results</description>
+    </simple>
+  </options>
+</service>

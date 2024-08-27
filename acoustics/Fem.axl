@@ -155,5 +155,16 @@
 
     <!-- Linear system service instance -->
     <service-instance name="linear-system" type="Arcane::FemUtils::IDoFLinearSystemFactory" default="AlephLinearSystem" />
+
+    <service-instance name="dirichlet" type="EOS::IEquationOfState" optional="true">
+      <description>Service d'equation d'état</description>
+    </service-instance>
+
+    <service-instance
+    name = "boundary-conditions"
+    type = "EOS::IArcaneFemBC"
+    optional = "true"
+   >
+  </service-instance>
   </options>
 </module>
