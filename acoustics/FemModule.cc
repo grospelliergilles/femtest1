@@ -118,8 +118,14 @@ _assembleLinearOperator()
   //EOS::IEquationOfState* x = options()->dirichlet();
   //x->initEOS(allCells());
 
-  //EOS::IDirichletPointCondition* x = options()->boundaryCondition()->dirichletBoundaryCondition();
-  //for (EOS::IDirichletPointCondition* bs : options()->boundaryConditions()->dirichletPointConditions())
+  EOS::IArcaneFemBC* x = options()->dirichletBoundaryConditions();
+  //for( ->dirichletBoundaryCondition();
+  info() << "BOUNDARY_CONDITION x=" << x;
+  if (x){
+    for (EOS::IDirichletPointCondition* bs : x->dirichletPointConditions()){
+      info() << "POINT_BC node_group=" << bs->getNode().name() << " value=" << bs->getValue();
+    }
+  }
 
   //cout << "NAME   " <<  options()->dirichlet()->namebc() << endl;
   //const auto& em = options()->dirichlet();

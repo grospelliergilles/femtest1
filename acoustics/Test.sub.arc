@@ -46,9 +46,12 @@
     </neumann-boundary-condition>
     <linear-system name="SequentialBasicLinearSystem" />
     <result-file>sub_2D.txt</result-file>
-    <dirichlet name="PerfectGas">
-      <namebc>dirrrr</namebc>
-    </dirichlet>
+    <dirichlet-boundary-conditions>
+      <dirichlet-point-condition>
+        <node>AllNodes</node>
+        <value>3.5</value>
+      </dirichlet-point-condition>
+    </dirichlet-boundary-conditions>
   </fem>
 
   <!--
